@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { folderService } from "../services/folder.service";
+import { fileService } from "../services/file.service";
 import { ResponseView } from "../views/response.view";
 import { CreateFolderDto, UpdateFolderDto, MoveFolderDto } from "../models/folder.model";
 
@@ -159,6 +160,65 @@ export const folderController = new Elysia({ prefix: "/folders" })
                     data: {
                       type: "array",
                       items: { $ref: "#/components/schemas/Folder" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          404: {
+            description: "Folder not found",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+              },
+            },
+          },
+        },
+      },
+    }
+  )
+
+  .get(
+    "/:id/files",
+    async ({ params, set }) => {
+      const folder = await folderService.findById(params.id);
+      
+      if (!folder) {
+        set.status = 404;
+        return ResponseView.error("Folder not found");
+      }
+
+      const files = await fileService.findByFolderId(folder.id as number);
+      return ResponseView.success(files, "Folder files retrieved successfully");
+    },
+    {
+      detail: {
+        tags: ["Folders"],
+        summary: "Get files in a folder",
+        description: "Retrieve all files in a specific folder",
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            description: "Folder ID",
+            required: true,
+            schema: { type: "integer", example: 1 },
+          },
+        ],
+        responses: {
+          200: {
+            description: "Folder files retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: { type: "boolean", example: true },
+                    message: { type: "string", example: "Folder files retrieved successfully" },
+                    data: {
+                      type: "array",
+                      items: { $ref: "#/components/schemas/FileWithFolder" },
                     },
                   },
                 },

@@ -1,0 +1,24 @@
+{
+  "name": "windows-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\" --names \"BE,FE\" --prefix-colors \"blue,green\"",
+    "dev:backend": "cd backend && bun run dev",
+    "dev:frontend": "cd frontend && bun run dev",
+    "build": "bun run build:backend && bun run build:frontend",
+    "build:backend": "cd backend && echo 'Backend build not configured'",
+    "build:frontend": "cd frontend && bun run build",
+    "test": "bun run test:backend && bun run test:frontend",
+    "test:backend": "cd backend && bun test",
+    "test:frontend": "cd frontend && bun run test:unit",
+    "test:e2e": "cd frontend && bun run test:e2e",
+    "install:all": "bun install && cd backend && bun install && cd ../frontend && bun install",
+    "db:migrate": "cd backend && bun run db:migrate",
+    "db:migrate:create": "cd backend && bun run db:migrate:create"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
+

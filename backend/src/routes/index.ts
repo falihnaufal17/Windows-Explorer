@@ -1,9 +1,11 @@
 import { Elysia } from "elysia";
 import { folderController } from "../controllers/folder.controller";
+import { fileController } from "../controllers/file.controller";
 import { appConfig } from "../config/app.config";
 
 export const routes = new Elysia({ prefix: appConfig.apiPrefix })
   .use(folderController)
+  .use(fileController)
   .get(
     "/health",
     () => ({
