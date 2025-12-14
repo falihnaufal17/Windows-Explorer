@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
+import { cors } from "@elysiajs/cors";
 import { appConfig } from "./config/app.config";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { loggerMiddleware } from "./middleware/logger.middleware";
@@ -19,6 +20,26 @@ async function startServer() {
   console.log("Database connection successful");
 
   const app = new Elysia()
+    .use(
+      cors({
+        origin: (request) => {
+          const origin = request.headers.get("Origin");
+          if (!origin) return true;
+          try {
+            const url = new URL(origin);
+            if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
+              return true;
+            }
+            return false;
+          } catch {
+            return false;
+          }
+        },
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
+      })
+    )
     .use(
       swagger({
         documentation: swaggerDocumentation as any,

@@ -86,7 +86,7 @@ class FileService {
         )
         ORDER BY f.name ASC
       `;
-      return results;
+      return results.map(file => this.addUrlsToFile(file));
     }
 
     const results = await db<FileWithFolder[]>`
@@ -105,7 +105,7 @@ class FileService {
       WHERE ff.folder_id = ${folderId}
       ORDER BY f.name ASC
     `;
-    return results;
+    return results.map(file => this.addUrlsToFile(file));
   }
 
   async create(data: CreateFileDto): Promise<FileWithFolder> {
